@@ -8,6 +8,20 @@ RUN echo "deb http://debian-archive.trafficmanager.net/debian/ jessie main contr
         echo "deb-src http://debian-archive.trafficmanager.net/debian-security/ jessie/updates main contrib non-free" >> /etc/apt/sources.list && \
         echo 'deb http://debian-archive.trafficmanager.net/debian jessie-backports main' >> /etc/apt/sources.list
 
+################################################################## Modified by Ruijie Yyz
+## add the Aliyun's Debian sources to /etc/apt/sources.list
+RUN echo "deb http://mirrors.aliyun.com/debian/ jessie main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ jessie-updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ jessie-backports main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian/ jessie main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian/ jessie-updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian/ jessie-backports main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security/ jessie/updates main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb-src http://mirrors.aliyun.com/debian-security/ jessie/updates main non-free contrib" >> /etc/apt/sources.list
+##########################################################################################
+
+
+
 ## Make apt-get non-interactive
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -219,12 +233,22 @@ RUN apt-get update && apt-get install -y \
         texlive-latex-extra \
         texlive-latex-recommended
 
+################################################################## Modified by Ruijie Yyz
+##  executing "RUN apt-get -y build-dep linux" will lead fails, because the debhelper version of Linux "backport source" is high. So, delete it.  (ps: don't forget 'apt-get update')
+RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get update
+#########################################################################################
 # For linux build
 RUN apt-get -y build-dep linux
 
 # For gobgp build
 RUN export VERSION=1.8.3 \
- && wget https://storage.googleapis.com/golang/go$VERSION.linux-amd64.tar.gz \
+################################################################## Modified by Ruijie Yyz
+##  because of China Great Wall, we put go1.8.3.linux-amd64.tar.gz on our Coding Git.
+##  && wget https://storage.googleapis.com/golang/go$VERSION.linux-amd64.tar.gz \
+ && git clone https://git.coding.net/snow420/go$VERSION.git \  
+ && mv  go$VERSION/go$VERSION.linux-amd64.tar.gz ./ \
+ && rm -rf go$VERSION \
+#########################################################################################
  && tar -C /usr/local -xzf go$VERSION.linux-amd64.tar.gz \
  && echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc \
  && echo 'export PATH=$PATH:$GOROOT/bin' >> /etc/bash.bashrc
@@ -255,8 +279,13 @@ RUN mkdir /var/run/sshd
 EXPOSE 22
 
 # Install depot-tools (for git-retry)
-RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/share/depot_tools
+################################################################## Modified by Ruijie Yyz
+## because of China Great Wall, We fork original git to our GitHub.
+##  RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/share/depot_tools
+RUN git clone https://github.com/phx420/depot_tools.git  /usr/share/depot_tools
+#########################################################################################
 ENV PATH /usr/share/depot_tools:$PATH
+
 
 # Install docker engine 17.03.2~ce-0 inside docker and enable experimental feature
 RUN apt-get update
