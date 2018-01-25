@@ -1,3 +1,12 @@
+
+
+
+[submodule "src/grpc"]
+       path = src/grpc
+       url  = https://github.com/grpc/grpc.git
+
+
+
 [submodule "sonic-swss-common"]
 	path = src/sonic-swss-common
 	url = https://github.com/Azure/sonic-swss-common
@@ -74,6 +83,6 @@
 [submodule "platform/nephos/sonic-platform-modules-ingrasys"]
 	path = platform/nephos/sonic-platform-modules-ingrasys
 	url = https://github.com/Ingrasys-sonic/sonic-platform-modules-ingrasys-nephos.git
-[submodule "src/grpc"]
-	paht = src/grpc
-	url  = https://github.com/grpc/grpc.git
+#[submodule "src/grpc"]
+#	path = src/grpc
+#	url  = https://github.com/grpc/grpc.git

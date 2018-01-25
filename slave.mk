@@ -61,9 +61,11 @@ list :
 
 include $(RULES_PATH)/config
 include $(RULES_PATH)/functions
-include $(RULES_PATH)/*.mk
+include $(RULES_PATH)/grpc.mk
+include $(RULES_PATH)/thrift.mk
+#include $(RULES_PATH)/*.mk
 ifneq ($(CONFIGURED_PLATFORM), undefined)
-include $(PLATFORM_PATH)/rules.mk
+#include $(PLATFORM_PATH)/rules.mk
 endif
 
 ifeq ($(USERNAME),)
